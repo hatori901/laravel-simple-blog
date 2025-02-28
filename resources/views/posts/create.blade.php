@@ -10,17 +10,22 @@
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     <section>
-                        <form method="post" action="#" class="space-y-6">
+                        <form method="post" action="{{ route('posts.store') }}" class="space-y-6">
+                            @csrf
                             <div>
                                 <x-input-label for="title" :value="__('Title')" />
                                 <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" />
-                                <x-input-error :messages="''" class="mt-2" />
+                                @if($errors->has('title'))
+                                <x-input-error :messages="$errors->get('title')" class="mt-2" />
+                                @endif
                             </div>
 
                             <div>
                                 <x-input-label for="content" :value="__('Content')" />
                                 <textarea id="content" name="content" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="6"></textarea>
-                                <x-input-error :messages="''" class="mt-2" />
+                                @if($errors->has('content'))
+                                <x-input-error :messages="$errors->get('content')" class="mt-2" />
+                                @endif
                             </div>
 
                             <div>
