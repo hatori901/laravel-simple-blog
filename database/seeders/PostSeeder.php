@@ -19,7 +19,6 @@ class PostSeeder extends Seeder
             'title' => 'Published post',
             'slug' => 'published-post',
             'published_at' => now(),
-            'status' => 'published',
         ]);
 
         Post::factory()->create([
@@ -27,7 +26,7 @@ class PostSeeder extends Seeder
             'title' => 'Draft post',
             'slug' => 'draft-post',
             'published_at' => now(),
-            'status' => 'draft',
+            'is_draft' => true,
         ]);
 
         Post::factory()->create([
@@ -35,7 +34,6 @@ class PostSeeder extends Seeder
             'title' => 'Scheduled post',
             'slug' => 'scheduled-post',
             'published_at' => now()->addDays(3),
-            'status' => 'published',
         ]);
 
         Post::factory(10)->create();

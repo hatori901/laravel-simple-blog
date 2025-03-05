@@ -9,7 +9,7 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'slug', 'title', 'content', 'published_at', 'status'];
+    protected $fillable = ['user_id', 'slug', 'title', 'content', 'published_at', 'is_draft'];
 
     protected $casts = [
         'published_at' => 'datetime',
@@ -22,6 +22,6 @@ class Post extends Model
 
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')->where('published_at', '<=', now());
+        return $query->where('is_draft', 'false')->where('published_at', '<=', now());
     }
 }

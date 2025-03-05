@@ -17,7 +17,7 @@ class PostFactory extends Factory
             'title' => $this->faker->sentence(4),
             'content' => $this->faker->paragraph(4),
             'slug' => Str::slug($this->faker->sentence(3)),
-            'status' => $this->faker->randomElement(['published', 'draft']),
+            'is_draft' => $this->faker->boolean(30),
             'published_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
             'user_id' => User::factory(),
         ];
