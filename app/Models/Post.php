@@ -22,6 +22,13 @@ class Post extends Model
 
     public function scopePublished($query)
     {
-        return $query->where('is_draft', 'false')->where('published_at', '<=', now());
+        return $query->where('is_draft', 0)->where('published_at', '<=', now());
+    }
+
+    public function status()
+    {
+        if ($this->is_draft) return 'Draft';
+        if ($this->published_at && $this->published_at->isFuture()) return 'Scheduled';
+        return 'Published';
     }
 }

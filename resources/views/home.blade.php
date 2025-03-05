@@ -32,15 +32,15 @@
                     @foreach($posts as $post)
                     <div class="rounded-md border p-5 shadow">
                         <div class="flex items-center gap-2">
-                            @if($post->status == 'draft')
-                            <span class="flex-none rounded bg-gray-100 px-2 py-1 text-gray-800">Draft</span>
-                            @else
-                                @if($post->published_at > now())
-                                <span class="flex-none rounded bg-yellow-100 px-2 py-1 text-yellow-800">Scheduled</span>
-                                @else
-                                <span class="flex-none rounded bg-green-100 px-2 py-1 text-green-800">Active</span>
-                                @endif
-                            @endif
+                            @php
+                                $styles = [
+                                    'Draft' => 'bg-gray-100 text-gray-800',
+                                    'Scheduled' => 'bg-yellow-100 text-yellow-800',
+                                    'Published' => 'bg-green-100 text-green-800',
+                                ]
+                            @endphp
+                            <span class="flex-none rounded px-2 py-1 {{ $styles[$post->status()] }}">{{ $post->status() }}</span>
+                            
                             <h3>
                                 <a href="{{ route('posts.show',$post->slug) }}" class="text-blue-500">
                                     {{ $post->title }}
