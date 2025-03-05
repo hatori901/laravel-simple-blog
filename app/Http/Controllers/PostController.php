@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -62,6 +63,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        Gate::authorize('update', $post);
         $post = Post::findOrFail($post->id);
         return view('posts.edit', compact('post'));
     }
@@ -69,12 +71,10 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, $id)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-        $post = Post::findOrFail($id);
-        if($post->user_id != auth()->id()){
-            return redirect()->back()->with('error', 'You are not authorized to update this post.');
-        }
+
+        Gate::authorize('update', $post);
         $post->update([
             'slug' => $this->slugify($request->title),
             'title' => $request->title,
@@ -90,10 +90,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $post = Post::findOrFail($post->id);
-        if($post->user_id != auth()->id()){
-            return redirect()->back()->with('error', 'You are not authorized to delete this post.');
-        }
+        Gate::authorize('delete', $post);
         $post->delete();
         return redirect()->route('home')->with('success', 'Post deleted successfully.');
     }
