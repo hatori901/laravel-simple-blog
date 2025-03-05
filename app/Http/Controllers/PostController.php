@@ -97,10 +97,11 @@ class PostController extends Controller
 
     private function slugify($title)
     {
+        $random = "abcdefghijklmnopqrstuvwxyz0123456789";
         $slug = \Str::slug($title);
         $count = Post::where('slug', 'LIKE', "{$slug}%")->count();
         if ($count > 0) {
-            $slug .= '-' . ($count + 1);
+            $slug .= '-' . substr(str_shuffle($random), 0, 5);
         }
         return $slug;
     }
