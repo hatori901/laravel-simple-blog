@@ -19,7 +19,7 @@ class PostTest extends TestCase
 
     public function test_guest_can_view_a_single_post()
     {
-        $post = Post::factory()->create(['status' => 'published', 'published_at' => now()]);
+        $post = Post::factory()->create(['is_draft' => 0, 'published_at' => now()]);
         
         $response = $this->get(route('posts.show', $post->slug));
         $response->assertStatus(200);
@@ -49,6 +49,30 @@ class PostTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
+    public function test_user_cannot_edit_other_users_post()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $otherUser->id]);
+
+        $response = $this->actingAs($user)->get(route('posts.edit', $post->id));
+        $response->assertStatus(404);
+    }
+
+    public function test_user_cannot_update_other_users_post()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $otherUser->id]);
+
+        $response = $this->actingAs($user)->patch(route('posts.update', $post->id), [
+            'title' => 'Updated Title',
+            'content' => 'Updated Content'
+        ]);
+
+        $response->assertStatus(404);
+    }
+
     public function test_authenticated_user_can_edit_their_own_post()
     {
         $user = User::factory()->create();
@@ -72,6 +96,16 @@ class PostTest extends TestCase
         $response->assertRedirect(route('home'));
     }
 
+    public function test_user_cannot_delete_other_users_post()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $otherUser->id]);
+
+        $response = $this->actingAs($user)->delete(route('posts.destroy', $post->id));
+        $response->assertStatus(404);
+    }
+
     public function test_authenticated_user_can_delete_their_own_post()
     {
         $user = User::factory()->create();
@@ -81,5 +115,36 @@ class PostTest extends TestCase
         
         $response = $this->delete(route('posts.destroy', $post->id));
         $response->assertRedirect(route('home'));
+    }
+
+    public function test_only_published_posts_are_visible_to_guests()
+    {
+        Post::factory()->create([
+            'title' => 'Published Post',
+            'is_draft' => false,
+            'published_at' => now()
+        ]);
+        Post::factory()->create([
+            'title' => 'Draft Post',
+            'is_draft' => true,
+            'published_at' => now()
+        ]);
+
+        $response = $this->get(route('posts.index'));
+
+        $response->assertSee('Published Post');
+        $response->assertDontSee('Draft Post');
+    }
+
+    public function test_scheduled_posts_are_not_visible_until_published()
+    {
+        Post::factory()->create([
+            'title' => 'Scheduled Post',
+            'is_draft' => false,
+            'published_at' => now()->addDays(2)
+        ]);
+
+        $response = $this->get(route('posts.index'));
+        $response->assertDontSee('Scheduled Post');
     }
 }
