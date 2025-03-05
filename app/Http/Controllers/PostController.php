@@ -39,7 +39,7 @@ class PostController extends Controller
                 'title' => $request->title,
                 'content' => $request->content,
                 'published_at' => $request->published_at,
-                'status' => $request->is_draft ? 'draft' : 'published',
+                'is_draft' => $request->is_draft,
             ]);
 
         if(!$create){
@@ -53,7 +53,7 @@ class PostController extends Controller
      */
     public function show($slug)
     {
-        $post = Post::with('author')->where('slug', $slug)->where('status', 'published')->where('published_at', '<=', now())->firstOrFail();
+        $post = Post::with('author')->where('slug', $slug)->where('is_draft', 0)->where('published_at', '<=', now())->firstOrFail();
         return view('posts.show', compact('post'));
     }
 
@@ -80,7 +80,7 @@ class PostController extends Controller
             'title' => $request->title,
             'content' => $request->content,
             'published_at' => $request->published_at,
-            'status' => $request->is_draft ? 'draft' : 'published',
+            'is_draft' => $request->is_draft,
         ]);
         return redirect()->route('home')->with('success', 'Post updated successfully.');
     }
