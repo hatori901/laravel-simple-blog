@@ -35,11 +35,11 @@ class PostController extends Controller
     {
         $create = Post::create([
                 'user_id' => auth()->id(),
-                'slug' => \Str::slug($request->title),
+                'slug' => $this->slugify($request->title),
                 'title' => $request->title,
                 'content' => $request->content,
                 'published_at' => $request->published_at,
-                'is_draft' => $request->is_draft,
+                'is_draft' => $request->is_draft ?? 0,
             ]);
 
         if(!$create){
@@ -76,11 +76,11 @@ class PostController extends Controller
             return redirect()->back()->with('error', 'You are not authorized to update this post.');
         }
         $post->update([
-            'slug' => \Str::slug($request->title),
+            'slug' => $this->slugify($request->title),
             'title' => $request->title,
             'content' => $request->content,
             'published_at' => $request->published_at,
-            'is_draft' => $request->is_draft,
+            'is_draft' => $request->is_draft ?? 0,
         ]);
         return redirect()->route('home')->with('success', 'Post updated successfully.');
     }
@@ -96,5 +96,15 @@ class PostController extends Controller
         }
         $post->delete();
         return redirect()->route('home')->with('success', 'Post deleted successfully.');
+    }
+
+    private function slugify($title)
+    {
+        $slug = \Str::slug($title);
+        $count = Post::where('slug', 'LIKE', "{$slug}%")->count();
+        if ($count > 0) {
+            $slug .= '-' . ($count + 1);
+        }
+        return $slug;
     }
 }
