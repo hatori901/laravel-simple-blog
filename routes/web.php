@@ -16,7 +16,6 @@ Route::middleware('auth')->group(function () {
 });
 
 // Guest & Authenticated Users can view posts
-Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
-Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
+Route::resource('posts', PostController::class)->only(['index', 'show']);
 
 require __DIR__.'/auth.php';
