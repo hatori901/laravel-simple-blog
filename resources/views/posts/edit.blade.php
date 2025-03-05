@@ -32,7 +32,7 @@
 
                             <div>
                                 <x-input-label for="published_at" :value="__('Publish Date')" />
-                                <x-text-input id="published_at" name="published_at" type="date" class="mt-1 block w-full" value="{{ Carbon\Carbon::parse($post->published_at)->format('Y-m-d') }}" />
+                                <x-text-input id="published_at" name="published_at" type="date" class="mt-1 block w-full" value="{{ $post->published_at->format('Y-m-d') }}" />
                                 <x-input-error :messages="''" class="mt-2" />
                             </div>
 

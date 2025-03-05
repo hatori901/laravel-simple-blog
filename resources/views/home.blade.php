@@ -49,8 +49,8 @@
                         </div>
                         <div class="mt-4 flex items-end justify-between">
                             <div>
-                                <div>Published: {{Carbon\Carbon::parse($post->published_at)->format('Y-m-d')}}</div>
-                                <div>Updated: {{Carbon\Carbon::parse($post->updated_at)->format('Y-m-d')}}</div>
+                                <div>Published: {{$post->published_at->format('Y-m-d')}}</div>
+                                <div>Updated: {{$post->updated_at->format('Y-m-d')}}</div>
                             </div>
                             <div>
                                 <a href="{{ route('posts.show',$post->slug) }}" class="text-blue-500">Detail</a> /
